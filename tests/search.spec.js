@@ -70,7 +70,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     // ==================== SEARCH RESULTS TESTS ====================
 
     test('TC-SEARCH-009: Valid address search should return results', async () => {
-        await searchPage.searchAddress('Queen Street');
+        await searchPage.searchAddress('Hamilton lake');
         await searchPage.waitForSearchResults();
 
         const results = await searchPage.getSearchResults();
@@ -85,7 +85,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     });
 
     test('TC-SEARCH-011: Results should be clickable', async () => {
-        await searchPage.searchAddress('Queen Street');
+        await searchPage.searchAddress('Air Force Museum of New Zealand');
         await searchPage.waitForSearchResults();
 
         const firstResult = await searchPage.getFirstResult();
@@ -95,7 +95,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     // ==================== RESULT SELECTION TESTS ====================
 
     test('TC-SEARCH-012: Selecting first result should display coordinates', async () => {
-        await searchPage.searchAddress('Queen Street');
+        await searchPage.searchAddress('Point Chevalier Beach');
         await searchPage.waitForSearchResults();
         await searchPage.selectFirstResult();
         await searchPage.waitForCoordinatesDisplay();
@@ -111,7 +111,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     });
 
     test('TC-SEARCH-014: Selected address should be populated in search input', async () => {
-        await searchPage.searchAddress('Queen Street');
+        await searchPage.searchAddress('Hamilton lake');
         await searchPage.waitForSearchResults();
         await searchPage.selectFirstResult();
 
@@ -148,7 +148,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     // ==================== LOADER/SPINNER TESTS ====================
 
     test('TC-SEARCH-017: Loader should appear during search', async () => {
-        await searchPage.fill('#query', 'Queen');
+        await searchPage.fill('#query', 'Symonds Street, Grafton');
         // Loader appears during API call
         // Note: This might be too fast to catch, test depends on network speed
     });

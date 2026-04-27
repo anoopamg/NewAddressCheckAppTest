@@ -203,7 +203,7 @@ test.describe('LOGIN PAGE - Test Suite', () => {
     expect(errorMsg).toContain('incorrect');
   });
 
-  test('TC-LOGIN-021: Case sensitivity - password should be case-sensitive', async () => {
+  test('TC-LOGIN-021: Case sensitivity - password should be case-sensitive (password123 vs Password123)', async () => {
     await loginPage.login(config.credentials.username, 'Password123');
     
     expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
