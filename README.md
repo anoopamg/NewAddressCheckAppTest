@@ -1,5 +1,8 @@
 ## **AddressCheckAppTest Framework Explanation**
 This is a **Playwright end-to-end testing automation framework** designed for testing an address search application. Here's a clear breakdown:
+
+**The demo application (AddressCheckApp) should be running in localhost:3000 for this test framework to run correctly.**
+
 ### **1. Core Technology Stack**
 - **Playwright** (v1.59.1) - Modern browser automation framework
 - **Node.js** - Runtime environment
