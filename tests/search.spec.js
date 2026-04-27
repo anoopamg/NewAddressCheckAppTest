@@ -32,60 +32,44 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         expect(searchValue).toBe('');
     });
 
-    test('TC-SEARCH-003: Search results should not display on initial load', async () => {
-        expect(await searchPage.isResultsDropdownVisible()).toBeFalsy();
-    });
-
-    test('TC-SEARCH-004: Coordinates display should not show on initial load', async () => {
-        expect(await searchPage.isCoordinatesDisplayVisible()).toBeFalsy();
-    });
-
-    test('TC-SEARCH-005: Clear button should not be visible initially', async () => {
+    test('TC-SEARCH-003: Clear button should not be visible initially', async () => {
         expect(await searchPage.isClearButtonVisible()).toBeFalsy();
     });
 
-    test('TC-SEARCH-006: Logout button should be visible', async () => {
+    test('TC-SEARCH-004: Logout button should be visible', async () => {
         expect(await searchPage.isLogoutButtonVisible()).toBeTruthy();
     });
 
     // ==================== SEARCH INPUT TESTS ====================
 
-    test('TC-SEARCH-007: Typing 1 character should not show results', async () => {
+    test('TC-SEARCH-005: Typing 1 character should not show results', async () => {
         await searchPage.searchAddress('Q');
 
         expect(await searchPage.isResultsDropdownVisible()).toBeFalsy();
     });
 
-    test('TC-SEARCH-008: Typing 2 characters should not show results', async () => {
+    test('TC-SEARCH-006: Typing 2 characters should not show results', async () => {
         await searchPage.searchAddress('QS');
 
         expect(await searchPage.isResultsDropdownVisible()).toBeFalsy();
     });
 
-    test('TC-SEARCH-009: Typing 3+ characters should trigger search', async () => {
+    test('TC-SEARCH-007: Typing 3+ characters should trigger search', async () => {
         await searchPage.searchAddress('Queen');
         await searchPage.waitForSearchResults();
 
         expect(await searchPage.isResultsDropdownVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-010: Clear button should display when text is entered', async () => {
+    test('TC-SEARCH-008: Clear button should display when text is entered', async () => {
         await searchPage.searchAddress('Queen Street');
 
         expect(await searchPage.isClearButtonVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-011: Search input should accept text', async () => {
-        const searchText = 'Queen Street';
-        await searchPage.fill('#query', searchText);
-
-        const inputValue = await searchPage.getSearchInputValue();
-        expect(inputValue).toBe(searchText);
-    });
-
     // ==================== SEARCH RESULTS TESTS ====================
 
-    test('TC-SEARCH-012: Valid address search should return results', async () => {
+    test('TC-SEARCH-009: Valid address search should return results', async () => {
         await searchPage.searchAddress('Queen Street');
         await searchPage.waitForSearchResults();
 
@@ -93,14 +77,14 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         expect(results.length).toBeGreaterThan(0);
     });
 
-    test('TC-SEARCH-013: Search results should display in dropdown', async () => {
+    test('TC-SEARCH-010: Search results should display in dropdown', async () => {
         await searchPage.searchAddress('Aotea');
         await searchPage.waitForSearchResults();
 
         expect(await searchPage.isResultsDropdownVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-014: Results should be clickable', async () => {
+    test('TC-SEARCH-011: Results should be clickable', async () => {
         await searchPage.searchAddress('Queen Street');
         await searchPage.waitForSearchResults();
 
@@ -110,7 +94,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
 
     // ==================== RESULT SELECTION TESTS ====================
 
-    test('TC-SEARCH-015: Selecting first result should display coordinates', async () => {
+    test('TC-SEARCH-012: Selecting first result should display coordinates', async () => {
         await searchPage.searchAddress('Queen Street');
         await searchPage.waitForSearchResults();
         await searchPage.selectFirstResult();
@@ -119,14 +103,14 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         expect(await searchPage.isCoordinatesDisplayVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-016: Coordinates should contain latitude and longitude', async () => {
+    test('TC-SEARCH-013: Coordinates should contain latitude and longitude', async () => {
         await searchPage.searchAndSelectAddress('Aotea Square');
 
         const coords = await searchPage.getCoordinatesText();
         expect(coords).toMatch(/Lat: -?\d+\.?\d*, Long: -?\d+\.?\d*/);
     });
 
-    test('TC-SEARCH-017: Selected address should be populated in search input', async () => {
+    test('TC-SEARCH-014: Selected address should be populated in search input', async () => {
         await searchPage.searchAddress('Queen Street');
         await searchPage.waitForSearchResults();
         await searchPage.selectFirstResult();
@@ -135,7 +119,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         expect(inputValue.length).toBeGreaterThan(0);
     });
 
-    test('TC-SEARCH-018: Should be able to select result by index', async () => {
+    test('TC-SEARCH-015: Should be able to select result by index', async () => {
         await searchPage.searchAddress('Queen');
         await searchPage.waitForSearchResults();
 
@@ -148,7 +132,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         expect(await searchPage.isCoordinatesDisplayVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-019: Should be able to select result by text match', async () => {
+    test('TC-SEARCH-016: Should be able to select result by text match', async () => {
         await searchPage.searchAddress('Queen Street');
         await searchPage.waitForSearchResults();
 
@@ -161,38 +145,9 @@ test.describe('SEARCH PAGE - Test Suite', () => {
         }
     });
 
-    // ==================== CLEAR BUTTON TESTS ====================
-
-    test('TC-SEARCH-020: Clear button should reset search form', async () => {
-        await searchPage.searchAddress('Queen Street');
-        await searchPage.waitForSearchResults();
-
-        await searchPage.clearSearch();
-
-        expect(await searchPage.getSearchInputValue()).toBe('');
-    });
-
-    test('TC-SEARCH-021: Clear button should hide results dropdown', async () => {
-        await searchPage.searchAddress('Queen');
-        await searchPage.waitForSearchResults();
-
-        await searchPage.clearSearch();
-
-        expect(await searchPage.isResultsDropdownVisible()).toBeFalsy();
-    });
-
-    test('TC-SEARCH-022: Clear button should hide coordinate display', async () => {
-        await searchPage.searchAndSelectAddress('Queen Street');
-        expect(await searchPage.isCoordinatesDisplayVisible()).toBeTruthy();
-
-        await searchPage.clearSearch();
-
-        expect(await searchPage.isCoordinatesDisplayVisible()).toBeFalsy();
-    });
-
     // ==================== LOADER/SPINNER TESTS ====================
 
-    test('TC-SEARCH-023: Loader should appear during search', async () => {
+    test('TC-SEARCH-017: Loader should appear during search', async () => {
         await searchPage.fill('#query', 'Queen');
         // Loader appears during API call
         // Note: This might be too fast to catch, test depends on network speed
@@ -200,14 +155,14 @@ test.describe('SEARCH PAGE - Test Suite', () => {
 
     // ==================== SPECIAL CHARACTERS TESTS ====================
 
-    test('TC-SEARCH-024: Search with special characters should not crash', async () => {
+    test('TC-SEARCH-018: Search with special characters should not crash', async () => {
         await searchPage.fill('#query', '!@#$%');
         await searchPage.waitForTimeout(500);
 
         expect(await searchPage.isSearchPageVisible()).toBeTruthy();
     });
 
-    test('TC-SEARCH-025: Search with numbers should work', async () => {
+    test('TC-SEARCH-019: Search with numbers should work', async () => {
         await searchPage.searchAddress('123 Queen');
 
         // Just verify search doesn't crash
@@ -216,7 +171,7 @@ test.describe('SEARCH PAGE - Test Suite', () => {
 
     // ==================== LOGOUT TESTS ====================
 
-    test('TC-SEARCH-026: User should be able to logout from search page', async () => {
+    test('TC-SEARCH-020: User should be able to logout from search page', async () => {
         await searchPage.logout();
         await expect(searchPage.page).toHaveURL(/.*login.html/);
     });

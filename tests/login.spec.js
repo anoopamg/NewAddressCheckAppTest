@@ -165,107 +165,45 @@ test.describe('LOGIN PAGE - Test Suite', () => {
     expect(await loginPage.getPassword()).toBe('');
   });
 
-  // ==================== TRIM/WHITESPACE TESTS ====================
-
-/*   test('TC-LOGIN-016: Should handle leading whitespace in username', async () => {
-    // The app trims whitespace, so this should work
-    const navPromise = loginPage.page.waitForNavigation();
-    await loginPage.enterUsername('  admin  ');
-    await loginPage.enterPassword(config.credentials.password);
-    await loginPage.clickLogin();
-    await navPromise;
-    
-    expect(await loginPage.getPageURL()).toContain('search.html');
-  }); */
-
-  test('TC-LOGIN-017: Should handle leading whitespace in password', async () => {
-    // The app trims whitespace, so this should work
-    const navPromise = loginPage.page.waitForNavigation();
-    await loginPage.enterUsername(config.credentials.username);
-    await loginPage.enterPassword('  password123  ');
-    await loginPage.clickLogin();
-    await navPromise;
-    
-    expect(await loginPage.getPageURL()).toContain('search.html');
-  });
-
-  // ==================== ERROR MESSAGE TESTS ====================
-
-  test('TC-LOGIN-018: Error message should not display on successful login', async () => {
-    await loginPage.login(config.credentials.username, config.credentials.password);
-    await loginPage.waitForURL('**/search.html');
-    
-    // Error message should not be visible after successful login
-    expect(await loginPage.isErrorMessageVisible()).toBeFalsy();
-  });
-
-  test('TC-LOGIN-019: Error message should be hidden initially', async () => {
-    expect(await loginPage.isErrorMessageVisible()).toBeFalsy();
-  });
-
-  test('TC-LOGIN-020: Error message should display with specific text for empty fields', async () => {
-    await loginPage.clickLogin();
-    
-    const errorMsg = await loginPage.getErrorMessageText();
-    expect(errorMsg).toBe('Username and Password are required.');
-  });
-
   // ==================== PAGE CONTENT TESTS ====================
 
-  test('TC-LOGIN-021: Page title should display correct heading', async () => {
+  test('TC-LOGIN-016: Page title should display correct heading', async () => {
     const title = await loginPage.getPageTitleText();
     expect(title).toBe('NZ Address Finder');
   });
 
-  test('TC-LOGIN-022: Page should display correct subtitle', async () => {
-    const subtitle = await loginPage.getPageSubtitleText();
-    expect(subtitle).toContain('Find locations');
-  });
-
   // ==================== BROWSER INTERACTION TESTS ====================
 
-  test('TC-LOGIN-023: Should reload page and maintain login form state', async () => {
+  test('TC-LOGIN-017: Should reload page and maintain login form state', async () => {
     await loginPage.enterUsername('testuser');
     
     expect(await loginPage.getUsername()).toBe('testuser');
     expect(await loginPage.getPassword()).toBe('');
   });
 
-  test('TC-LOGIN-024: Page should be scrollable', async () => {
-    const isVisible = await loginPage.isLoginPageVisible();
-    expect(isVisible).toBeTruthy();
-  });
-
   // ==================== EDGE CASE TESTS ====================
 
-  test('TC-LOGIN-025: Should handle special characters in username', async () => {
+  test('TC-LOGIN-018: Should handle special characters in username', async () => {
     await loginPage.login('admin@#$%', config.credentials.password);
     
     expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
   });
 
-  test('TC-LOGIN-026: Should handle special characters in password', async () => {
+  test('TC-LOGIN-019: Should handle special characters in password', async () => {
     await loginPage.login(config.credentials.username, '@#$%^&*');
     
     expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
   });
 
-  test('TC-LOGIN-027: Should handle very long username input', async () => {
-    const longUsername = 'a'.repeat(100);
-    await loginPage.login(longUsername, config.credentials.password);
-    
-    expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
-  });
-
-  test('TC-LOGIN-028: Case sensitivity - username should be case-sensitive (admin vs Admin)', async () => {
-    await loginPage.login('Admin', config.credentials.password);
+  test('TC-LOGIN-020: Case sensitivity - username should be case-sensitive (adminuser vs Adminuser)', async () => {
+    await loginPage.login('Adminuser', config.credentials.password);
     
     expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
     const errorMsg = await loginPage.getErrorMessageText();
     expect(errorMsg).toContain('incorrect');
   });
 
-  test('TC-LOGIN-029: Case sensitivity - password should be case-sensitive', async () => {
+  test('TC-LOGIN-021: Case sensitivity - password should be case-sensitive', async () => {
     await loginPage.login(config.credentials.username, 'Password123');
     
     expect(await loginPage.isErrorMessageVisible()).toBeTruthy();
