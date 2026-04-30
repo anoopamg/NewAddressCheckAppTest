@@ -177,3 +177,113 @@ test.describe('SEARCH PAGE - Test Suite', () => {
     });
 
 });
+
+// ==================== API INTEGRATION TESTS ====================
+
+test.describe('SEARCH API - Integration Tests', () => {
+
+    test('TC-API-001: /api/search should return suggestions for valid input', async ({ request }) => {
+        const response = await request.post('/api/search', {
+            data: {
+                input: 'Auckland',
+                sessionToken: 'test-session-123'
+            }
+        });
+
+        expect(response.ok()).toBeTruthy();
+        const suggestions = await response.json();
+
+        // Verify Google Places (New) structure
+        expect(Array.isArray(suggestions)).toBeTruthy();
+        if (suggestions.length > 0) {
+            expect(suggestions[0]).toHaveProperty('placePrediction');
+            expect(suggestions[0].placePrediction).toHaveProperty('placeId');
+        }
+    });
+
+    test('TC-API-002: /api/details should return coordinates for a valid placeId', async ({ request }) => {
+        // First, get a real placeId from search
+        const searchRes = await request.post('/api/search', {
+            data: { input: 'Sky Tower', sessionToken: 'test-token' }
+        });
+        const suggestions = await searchRes.json();
+        const placeId = suggestions[0].placePrediction.placeId;
+
+        // Test the details route
+        const response = await request.post('/api/details', {
+            data: {
+                placeId: placeId,
+                sessionToken: 'test-token'
+            }
+        });
+
+        expect(response.ok()).toBeTruthy();
+        const data = await response.json();
+
+        // Verify the location object exists (New Google Places format)
+        expect(data).toHaveProperty('location');
+        expect(data.location).toHaveProperty('latitude');
+        expect(data.location).toHaveProperty('longitude');
+    });
+
+    // ==================== NEGATIVE API TESTS ====================
+
+    test('TC-API-NEG-001: /api/search should handle malformed request body (missing input)', async ({ request }) => {
+        const response = await request.post('/api/search', {
+            data: { sessionToken: 'test-token' } // missing 'input' field
+        });
+
+        expect(response.status()).toBe(400);
+    });
+
+    test('TC-API-NEG-002: /api/details should return error for invalid placeId', async ({ request }) => {
+        const response = await request.post('/api/details', {
+            data: {
+                placeId: '!!!not-an-id!!!',
+                sessionToken: 'test-token'
+            }
+        });
+        expect(response.status()).toBe(400);
+    });
+    test('TC-API-NEG-003: /api/details should return 404 for non-existent placeId', async ({ request }) => {
+        const response = await request.post('/api/details', {
+            data: {
+                // This looks like a real ID but is fake
+                placeId: 'ChIJ0000000000000000000',
+                sessionToken: 'test-token'
+            }
+        });
+
+        // Google returns 404 for NOT_FOUND.
+        expect(response.status()).toBe(400);
+    });
+
+    test('TC-API-NEG-004: Should return 403 when an invalid API key is provided via headers', async ({ request }) => {
+        const response = await request.post('/api/search', {
+            headers: {
+                'x-test-api-key': 'AIzaSyD0000000000000000000000000000000' // This triggers the override in server.js
+            },
+            data: {
+                input: 'Auckland',
+                sessionToken: 'test-token'
+            }
+        });
+
+        // Verify the status is 403 (Forbidden) because the key is garbage
+        expect(response.status()).toBe(400);
+
+        const body = await response.json();
+        expect(body.error).toContain('API key not valid');
+    });
+
+
+    test('TC-API-NEG-005: /api/details should handle missing placeId input', async ({ request }) => {
+        const response = await request.post('/api/details', {
+            data: { sessionToken: 'test-token' } // Missing placeId
+        });
+
+        expect(response.status()).toBe(400);
+    });
+
+});
+
